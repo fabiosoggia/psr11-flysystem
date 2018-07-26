@@ -11,7 +11,7 @@ class S3AdapterFactory implements FactoryInterface
 {
     public function __invoke(array $options)
     {
-        $options = array_merge([
+        $options = array_replace([
             'key' => null,
             'secret' => null,
             'region' => 'us-east-1',
@@ -22,6 +22,13 @@ class S3AdapterFactory implements FactoryInterface
 
         $bucket = $options['bucket'];
         $prefix = $options['prefix'];
+
+        if (!array_key_exists('credentials', $options)) {
+            $credentials = [];
+            $credentials['key']  = $options['key'];
+            $credentials['secret'] = $options['secret'];
+            $options['credentials'] = $credentials;
+        }
 
         $client = new S3Client($options);
 
