@@ -11,21 +11,19 @@ class S3AdapterFactory implements FactoryInterface
 {
     public function __invoke(array $options)
     {
-        $key = $options['key'] ?? null;
-        $secret = $options['secret'] ?? null;
-        $region = $options['region'] ?? 'us-east-1';
-        $version = $options['version'] ?? 'latest';
-        $bucket = $options['bucket'] ?? null;
-        $prefix = $options['prefix'] ?? null;
+        $options = array_merge([
+            'key' => null,
+            'secret' => null,
+            'region' => 'us-east-1',
+            'version' => 'latest',
+            'bucket' => null,
+            'prefix' => null,
+        ], $options);
 
-        $client = new S3Client([
-            'version'     => $version,
-            'region'      => $region,
-            'credentials' => [
-                'key'    => $key,
-                'secret' => $secret
-            ]
-        ]);
+        $bucket = $options['bucket'];
+        $prefix = $options['prefix'];
+
+        $client = new S3Client($options);
 
         return new AwsS3Adapter($client, $bucket, $prefix);
     }
